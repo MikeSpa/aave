@@ -60,6 +60,25 @@ def get_asset_price(price_feed_address):
     return float(converted_latest_price)
 
 
+def repay(amount, lending_pool, account):
+    print("Repaying...")
+    approve_erc20(
+        Web3.toWei(amount, "ether"),
+        lending_pool,
+        config["networks"][network.show_active()]["dai_token"],
+        account,
+    )
+    repay_tx = lending_pool.repay(
+        config["networks"][network.show_active()]["dai_token"],
+        amount,
+        1,
+        account.address,
+        {"from": account},
+    )
+    repay_tx.wait(1)
+    print("Repaid!")
+
+
 def main():
     account = get_account()
     erc20_address = config["networks"][network.show_active()]["weth_token"]
@@ -101,4 +120,8 @@ def main():
     )
     borrow_tx.wait(1)
     print("Borrowed DAI")
+    get_borrowable_data(lending_pool, account)
+    # Repay
+
+    repay(Web3.toWei(amount_dai_to_borrow, "ether"), lending_pool, account)
     get_borrowable_data(lending_pool, account)
