@@ -7,6 +7,10 @@ def get_weth(amount=0.1):
     Mints WETH by deposing ETH.
     """
     account = get_account()
+    # interact with wETH contract:
+    # ABI (copy interface (tho only need function we wanna use)) +
+    # Address of the contract (copy in config)
+    # weth is the WETH contract
     weth = interface.IWETH(config["networks"][network.show_active()]["weth_token"])
     deposit_tx = weth.deposit({"from": account, "value": amount * 10 ** 18})
     deposit_tx.wait(1)
